@@ -9,7 +9,8 @@ edition = "2018"
 #external crates
 [dependencies]
 rand = "^0.8.3"
+"dusk-plonk" = "0.2.5"
 
-[dependencies.dusk-plonk]
-version = "0.1.0"
-features = ["trace-print", "trace"]
+# [dependencies.dusk-plonk]
+# version = "0.1.0"
+# features = ["trace-print", "trace"]

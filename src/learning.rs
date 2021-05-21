@@ -47,12 +47,12 @@ fn main() {
     plonk();
 
 
-     //say_hi();
+    //say_hi();
     //guessing_game()
     //another_function()
     //return_value()
     //size_exml()
-    // for_loop();
+    //for_loop();
     //match_with_range();
     //password();
 

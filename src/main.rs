@@ -77,7 +77,8 @@ impl Circuit for TestCircuit {
 }
 
 
-fn main() {
+
+fn main() -> Result<(), Error> {
 
     // Now let's use the Circuit we've just implemented!
 

@@ -1,53 +1,20 @@
-use std::io;
-use rand::{thread_rng, Rng};
-use std::cmp::Ordering;
-use std::mem;
 use self::dusk::plonk;
-use self::something::User; // Ok.
-
-//use library
-use guessing_game::GREETING;
-use guessing_game::say_hi;
 
 use dusk_plonk::prelude::*;
+use dusk_jubjub::{JubJubAffine, JubJubScalar};
 
+use rand_core::OsRng;
 
 //plonk usage
 mod dusk {
     pub fn plonk() {
-        println!("load examples PLONK")
-        let composer = &mut StandardComposer
+        println!("Complete examples TestCircuit");
     }
-
-
 }
 
-  
-mod something {
-    #[derive(Debug)]//#[derive(Debug, Default)]
-    pub struct User {
-        pub name: String,
-        pub id: i32
-    }
-
-    
-}
 //cargo doc --open
 //target/doc/rand/trait.Rng.html#method.gen_range
 
-enum State {
-    Locked,
-    Failed,
-    Unlocked
-}
-
-
-// Implement a circuit that checks:
-// 1) a + b = c where C is a PI
-// 2) a <= 2^6
-// 3) b <= 2^5
-// 4) a * b = d where D is a PI
-// 5) JubJub::GENERATOR * e(JubJubScalar) = f where F is a Public Input
 #[derive(Debug, Default)]
 pub struct TestCircuit {
     a: BlsScalar,
@@ -67,11 +34,13 @@ impl Circuit for TestCircuit {
     ) -> Result<(), Error> {
         let a = composer.add_input(self.a);
         let b = composer.add_input(self.b);
+        let zero_var = composer.add_witness_to_circuit_description(BlsScalar::zero());
+        println!("zero_var {:?}", zero_var); // ok!
         // Make first constraint a + b = c
         composer.poly_gate(
             a,
             b,
-            composer.zero_var,
+            zero_var,
             BlsScalar::zero(),
             BlsScalar::one(),
             BlsScalar::one(),
@@ -86,7 +55,7 @@ impl Circuit for TestCircuit {
         composer.poly_gate(
             a,
             b,
-            composer.zero_var,
+            zero_var,
             BlsScalar::one(),
             BlsScalar::zero(),
             BlsScalar::zero(),
@@ -110,10 +79,55 @@ impl Circuit for TestCircuit {
 
 fn main() {
 
+    // Now let's use the Circuit we've just implemented!
 
-    plonk();
+    let pp = PublicParameters::setup(1 << 12, &mut OsRng)?;
+    // println!("pp, {:?}", pp);
+
+    // Initialize the circuit
+    let mut circuit = TestCircuit::default();
+
+    // Compile the circuit
+    let (pk, vd) = circuit.compile(&pp)?;
+
+
+    // Prover POV
+    let proof = {
+        let mut circuit = TestCircuit {
+            a: BlsScalar::from(20u64),
+            b: BlsScalar::from(5u64),
+            c: BlsScalar::from(25u64),
+            d: BlsScalar::from(100u64),
+            e: JubJubScalar::from(2u64),
+            f: JubJubAffine::from(
+                dusk_jubjub::GENERATOR_EXTENDED * JubJubScalar::from(2u64),
+            ),
+        };
+        circuit.gen_proof(&pp, &pk, b"Test")
+    }?;
+
+    // Verifier POV
+    let public_inputs: Vec<PublicInputValue> = vec![
+        BlsScalar::from(25u64).into(),
+        BlsScalar::from(100u64).into(),
+        JubJubAffine::from(
+            dusk_jubjub::GENERATOR_EXTENDED * JubJubScalar::from(2u64),
+        )
+        .into(),
+    ];
 
     
+
+    circuit::verify_proof(
+        &pp,
+        &vd.key(),
+        &proof,
+        &public_inputs,
+        &vd.pi_pos(),
+        b"Test",
+    )
+     
+
 
 }
 

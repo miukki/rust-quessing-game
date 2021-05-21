@@ -9,7 +9,12 @@ edition = "2018"
 #external crates
 [dependencies]
 rand = "^0.8.3"
-"dusk-plonk" = "0.2.5"
+dusk-plonk = "0.8.0"
+cfg-if = "1.0"
+dusk-jubjub = { version = "0.10", default-features = false }
+dusk-bls12_381 = { version = "0.8", default-features = false, features = ["groups", "pairings", "endo"] }
+rand_core = { version = "0.6", default-features = false }
+
 
 # [dependencies.dusk-plonk]
 # version = "0.1.0"

@@ -1,10 +1,24 @@
 
-compiler nightly
+# Compiler nightly
+```
 https://rust-lang.github.io/rustup/concepts/channels.html
 
-how to print sctruct 
+```
+
+# How to print sctruct 
+```
 http://joelmccracken.github.io/entries/how-to-print-a-struct-in-rust/
 
+```
 
-operators
+
+# Operators to learn
+```
 https://doc.rust-lang.org/book/appendix-02-operators.html
+
+```
+
+# Debuger
+```
+https://levelup.gitconnected.com/rust-with-visual-studio-code-46404befed8
+```

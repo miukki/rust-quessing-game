@@ -78,7 +78,7 @@ impl Circuit for TestCircuit {
 
 
 
-fn main() -> Result<(), Error> {
+fn circuit_verify() -> Result<(), Error> {
 
     // Now let's use the Circuit we've just implemented!
 
@@ -86,7 +86,11 @@ fn main() -> Result<(), Error> {
     // println!("pp, {:?}", pp);
 
     // Initialize the circuit
+    //representing  as a circuit with logic gates
+    //we build circuit (type default) 
     let mut circuit = TestCircuit::default();
+
+    //how to create custom gate?
 
     // Compile the circuit
     let (pk, vd) = circuit.compile(&pp)?;
@@ -94,6 +98,8 @@ fn main() -> Result<(), Error> {
 
     // Prover POV
     let proof = {
+        //for polynomial equations
+        //give me a set of values that satisfies a set of math equations
         let mut circuit = TestCircuit {
             a: BlsScalar::from(20u64),
             b: BlsScalar::from(5u64),
@@ -108,6 +114,7 @@ fn main() -> Result<(), Error> {
     }?;
 
     // Verifier POV
+    // what is vec! ?
     let public_inputs: Vec<PublicInputValue> = vec![
         BlsScalar::from(25u64).into(),
         BlsScalar::from(100u64).into(),
@@ -128,6 +135,17 @@ fn main() -> Result<(), Error> {
         b"Test",
     )
      
+
+
+}
+
+
+
+fn main() {
+
+   
+    let result =  circuit_verify();
+    println!("result::: {:?}", result);
 
 
 }
